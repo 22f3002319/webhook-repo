@@ -14,3 +14,16 @@ README.md
 *.md
 .vscode/
 .idea/
+static/
+*.html
+*.css
+*.js
+app.py
+ARCHITECTURE.md
+DEPLOYMENT.md
+SETUP_GUIDE.md
+TESTING.md
+VERCEL_DEPLOYMENT_STATUS.md
+HOW_TO_CHECK_LOGS.md
+TROUBLESHOOTING_VERCEL.md
+VERCEL_FIX.md
