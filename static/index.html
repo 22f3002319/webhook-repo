@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Webhook Events Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GitHub Webhook Events Monitor</h1>
+            <p class="subtitle">Real-time monitoring of repository events</p>
+            <div class="status-indicator">
+                <span id="status-dot" class="status-dot"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="events-container">
+                <div id="events-list" class="events-list">
+                    <div class="empty-state">
+                        <p>No events yet. Trigger some webhook events to see them here!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Polling every <span id="poll-interval">15</span> seconds</p>
+            <p class="last-update">Last update: <span id="last-update">Never</span></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
