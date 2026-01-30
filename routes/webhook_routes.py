@@ -5,6 +5,7 @@ Handles GitHub webhook endpoint
 
 from flask import Blueprint, request, jsonify, current_app
 import logging
+from datetime import datetime
 from services.github_webhook_service import GitHubWebhookService
 from services.event_service import EventService
 
