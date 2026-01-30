@@ -53,19 +53,5 @@ def create_app():
         return error_app
 
 # Create the app instance
+# Vercel will automatically convert Flask app to WSGI
 app = create_app()
-
-# WSGI application for Vercel
-# Vercel Python runtime expects this function
-def application(environ, start_response):
-    """WSGI application wrapper for Vercel"""
-    try:
-        return app(environ, start_response)
-    except Exception as e:
-        # Fallback error handler
-        import traceback
-        error_msg = f"Application error: {str(e)}\n{traceback.format_exc()}"
-        status = '500 INTERNAL SERVER ERROR'
-        headers = [('Content-Type', 'text/plain; charset=utf-8')]
-        start_response(status, headers)
-        return [error_msg.encode('utf-8')]
