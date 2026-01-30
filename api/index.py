@@ -12,5 +12,11 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 # Import the Flask app WSGI application
-# Vercel Python runtime will automatically use this as the handler
 from vercel_app import application
+
+# Vercel Python runtime requires a variable named 'handler' or 'app'
+# Export the WSGI application as 'handler'
+handler = application
+
+# Also export as 'app' for compatibility
+app = application
