@@ -21,11 +21,15 @@ def create_app():
     CORS(app)
     
     # Initialize MongoDB connection
+    # Don't fail on startup if MongoDB is not available
+    # Connection will be established on first use
     try:
         init_mongodb(app)
     except Exception as e:
-        print(f"Warning: MongoDB initialization failed: {e}")
-        # Continue without MongoDB for now (will fail on actual DB operations)
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"MongoDB initialization failed: {e}")
+        # Continue without MongoDB - connection will be retried on first DB operation
     
     # Register blueprints
     from routes.webhook_routes import webhook_bp

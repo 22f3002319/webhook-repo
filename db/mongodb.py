@@ -23,37 +23,44 @@ def init_mongodb(app):
     global client, db
     
     try:
-        mongodb_uri = app.config['MONGODB_URI']
-        db_name = app.config['MONGODB_DB_NAME']
+        mongodb_uri = app.config.get('MONGODB_URI', '')
+        db_name = app.config.get('MONGODB_DB_NAME', 'github_webhooks')
         
         if not mongodb_uri:
-            raise ValueError("MONGODB_URI environment variable is not set")
+            logger.warning("MONGODB_URI environment variable is not set. MongoDB features will be unavailable.")
+            return  # Don't raise error, allow app to start
         
-        # Create MongoDB client
+        # Create MongoDB client with longer timeout for serverless
         client = MongoClient(
             mongodb_uri,
-            serverSelectionTimeoutMS=5000,  # 5 second timeout
-            connectTimeoutMS=10000,
-            socketTimeoutMS=10000
+            serverSelectionTimeoutMS=10000,  # 10 second timeout for serverless
+            connectTimeoutMS=15000,
+            socketTimeoutMS=15000,
+            retryWrites=True
         )
         
-        # Test connection
-        client.admin.command('ping')
+        # Test connection (non-blocking for serverless)
+        try:
+            client.admin.command('ping')
+        except Exception as ping_error:
+            logger.warning(f"MongoDB ping failed: {ping_error}. Connection will be retried on first use.")
+            # Don't raise - allow lazy connection
         
         # Get database instance
         db = client[db_name]
         
-        # Create indexes for better query performance
-        create_indexes(db)
+        # Create indexes for better query performance (non-blocking)
+        try:
+            create_indexes(db)
+        except Exception as index_error:
+            logger.warning(f"Index creation failed (may already exist): {index_error}")
         
-        logger.info(f"Successfully connected to MongoDB Atlas: {db_name}")
+        logger.info(f"MongoDB client initialized for database: {db_name}")
         
-    except (ConnectionFailure, ServerSelectionTimeoutError) as e:
-        logger.error(f"Failed to connect to MongoDB Atlas: {e}")
-        raise
     except Exception as e:
         logger.error(f"Error initializing MongoDB: {e}")
-        raise
+        # Don't raise - allow app to start without MongoDB
+        # Connection will be retried on first DB operation
 
 def create_indexes(db_instance):
     """
