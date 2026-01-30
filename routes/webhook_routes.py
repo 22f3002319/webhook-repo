@@ -83,5 +83,25 @@ def webhook_info():
     return jsonify({
         'message': 'GitHub Webhook Endpoint',
         'method': 'POST',
-        'events': ['push', 'pull_request']
+        'events': ['push', 'pull_request'],
+        'status': 'active'
+    }), 200
+
+@webhook_bp.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for testing"""
+    try:
+        from db.mongodb import get_db
+        db = get_db()
+        # Try to ping MongoDB
+        db.command('ping')
+        mongo_status = 'connected'
+    except Exception as e:
+        mongo_status = f'disconnected: {str(e)}'
+    
+    return jsonify({
+        'status': 'ok',
+        'service': 'GitHub Webhook Receiver',
+        'mongodb': mongo_status,
+        'timestamp': datetime.utcnow().isoformat()
     }), 200
