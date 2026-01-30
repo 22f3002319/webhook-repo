@@ -54,4 +54,19 @@ def index():
     """Serve the main HTML page"""
     from flask import current_app
     import os
-    return current_app.send_static_file('index.html')
+    try:
+        return current_app.send_static_file('index.html')
+    except Exception as e:
+        # Fallback if static file not found
+        return f"""
+        <html>
+        <head><title>GitHub Webhook Monitor</title></head>
+        <body>
+            <h1>GitHub Webhook Events Monitor</h1>
+            <p>Application is running but static files may not be configured correctly.</p>
+            <p>Error: {str(e)}</p>
+            <p>API endpoint: <a href="/api/events">/api/events</a></p>
+            <p>Webhook endpoint: <a href="/webhook">/webhook</a></p>
+        </body>
+        </html>
+        """, 200
