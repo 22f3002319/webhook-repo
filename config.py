@@ -14,9 +14,6 @@ class Config:
     
     # MongoDB Atlas settings
     MONGODB_URI = os.environ.get('MONGODB_URI') or ''
-    # Replace URL-encoded characters if needed
-    if MONGODB_URI:
-        MONGODB_URI = MONGODB_URI.replace('%23', '#')  # Decode # from URL encoding
     MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME') or 'github_webhooks'
     
     # GitHub Webhook settings
