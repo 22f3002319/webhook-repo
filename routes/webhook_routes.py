@@ -91,18 +91,30 @@ def webhook_info():
 @webhook_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for testing"""
+    from flask import current_app
+    from db.mongodb import client, db
+    
+    # Check MongoDB connection
+    mongo_status = 'unknown'
     try:
-        from db.mongodb import get_db
-        db = get_db()
-        # Try to ping MongoDB
-        db.command('ping')
-        mongo_status = 'connected'
+        if client is None or db is None:
+            mongo_status = 'not_initialized'
+        else:
+            # Try to ping MongoDB
+            client.admin.command('ping')
+            mongo_status = 'connected'
     except Exception as e:
         mongo_status = f'disconnected: {str(e)}'
+    
+    # Check if MongoDB URI is configured
+    mongodb_uri = current_app.config.get('MONGODB_URI', '')
+    if not mongodb_uri:
+        mongo_status = 'not_configured'
     
     return jsonify({
         'status': 'ok',
         'service': 'GitHub Webhook Receiver',
         'mongodb': mongo_status,
+        'mongodb_configured': bool(mongodb_uri),
         'timestamp': datetime.utcnow().isoformat()
     }), 200

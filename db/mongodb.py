@@ -90,8 +90,18 @@ def get_db():
     Returns:
         MongoDB database instance
     """
+    global db
     if db is None:
-        raise RuntimeError("Database not initialized. Call init_mongodb() first.")
+        # Try to initialize if not already done
+        try:
+            from flask import current_app
+            if current_app:
+                init_mongodb(current_app)
+        except Exception:
+            pass
+        
+        if db is None:
+            raise RuntimeError("Database not initialized. Call init_mongodb() first.")
     return db
 
 def close_connection():
