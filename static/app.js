@@ -143,8 +143,10 @@ class WebhookMonitor {
         `;
         
         // Insert at the beginning of the list (newest first)
-        if (eventsList.firstChild && !eventsList.firstChild.classList.contains('empty-state')) {
-            eventsList.insertBefore(eventCard, eventsList.firstChild);
+        // Find first element child (skip text nodes)
+        let firstElementChild = eventsList.firstElementChild;
+        if (firstElementChild && firstElementChild.classList && !firstElementChild.classList.contains('empty-state')) {
+            eventsList.insertBefore(eventCard, firstElementChild);
         } else {
             eventsList.appendChild(eventCard);
         }
