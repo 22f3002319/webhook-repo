@@ -32,6 +32,8 @@ def create_app():
     
     return app
 
+# Create app instance for gunicorn and production deployment
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True, host='0.0.0.0', port=5000)
