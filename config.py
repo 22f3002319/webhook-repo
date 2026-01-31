@@ -14,6 +14,9 @@ class Config:
     
     # MongoDB Atlas settings
     MONGODB_URI = os.environ.get('MONGODB_URI') or ''
+    # Note: If password contains special characters (#, !, @, etc.), 
+    # they must be URL-encoded in the environment variable:
+    # # = %23, ! = %21, @ = %40, etc.
     MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME') or 'github_webhooks'
     
     # GitHub Webhook settings
